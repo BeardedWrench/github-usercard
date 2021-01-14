@@ -39,7 +39,24 @@ api.catch( ( error ) => {
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'
+];
+
+followersArray.forEach( ( person ) =>{
+  axios.get( `https://api.github.com/users/${person}` )
+  .then( ( res ) =>{
+    getDiv.appendChild( cardMaker( res ) );
+  } )
+  .catch( ( error ) => {
+    console.log( error );
+  } )
+  
+} )
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -87,11 +104,12 @@ function cardMaker( { data } ){
   nameH3.textContent = data.name;
   userName.textContent = data.login;
   locationP.textContent = `Location: ${data.location}`;
-  profileP.textContent = `Profile: \n ${link}`;
+  profileP.textContent = `Profile: \n`;
   followersP.textContent = `Followers: ${data.followers}`;
   followingP.textContent = `Following: ${data.following}`;
   bioP.textContent = `Bio: ${data.bio}`;
-
+  
+  profileP.appendChild( link );
   card.appendChild( avatarImg );
   card.appendChild( cardInfo );
 

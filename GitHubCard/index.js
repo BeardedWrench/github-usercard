@@ -1,8 +1,13 @@
+import axios from "axios";
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+
+const api = axios.get('https://api.github.com/users/BeardedWrench');
+const getDiv = document.querySelector( '.cards' );
+
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -16,6 +21,12 @@
   STEP 4: Pass the data received from Github into your function,
     and append the returned markup to the DOM as a child of .cards
 */
+api.then( ( res ) => {
+  getDiv.appendChild( cardMaker( res ) );
+})
+api.catch( ( error ) => {
+  console.log( error );
+} )
 
 /*
   STEP 5: Now that you have your own card getting added to the DOM, either
@@ -28,7 +39,24 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'
+];
+
+followersArray.forEach( ( person ) =>{
+  axios.get( `https://api.github.com/users/${person}` )
+  .then( ( res ) =>{
+    getDiv.appendChild( cardMaker( res ) );
+  } )
+  .catch( ( error ) => {
+    console.log( error );
+  } )
+  
+} )
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -39,7 +67,7 @@ const followersArray = [];
       <div class="card-info">
         <h3 class="name">{users name}</h3>
         <p class="username">{users user name}</p>
-        <p>Location: {users location}</p>
+        <p>Location:{users location}</p>
         <p>Profile:
           <a href={address to users github page}>{address to users github page}</a>
         </p>
@@ -49,6 +77,69 @@ const followersArray = [];
       </div>
     </div>
 */
+function cardMaker( { data } ){
+
+  const card = document.createElement( 'div' );
+
+  const avatarImg = document.createElement( 'img' );
+  const cardInfo = document.createElement( 'div' );
+  const nameH3 = document.createElement( 'h3' );
+  const userName = document.createElement( 'p' );
+  const locationP = document.createElement( 'p' );
+  const profileP = document.createElement( 'p' );
+  const link = document.createElement( 'a' );
+  const followersP = document.createElement( 'p' );
+  const followingP = document.createElement( 'p' );
+  const bioP = document.createElement( 'p' );
+  
+  card.classList.add( 'card' );
+  cardInfo.classList.add( 'card-info' );
+  nameH3.classList.add( 'name' );
+  userName.classList.add( 'username' );
+
+  avatarImg.src = data.avatar_url;
+  link.href = data.html_url;
+
+  link.textContent = data.html_url;
+  nameH3.textContent = data.name;
+  userName.textContent = data.login;
+  locationP.textContent = `Location: ${data.location}`;
+  profileP.textContent = `Profile: \n`;
+  followersP.textContent = `Followers: ${data.followers}`;
+  followingP.textContent = `Following: ${data.following}`;
+  bioP.textContent = `Bio: ${data.bio}`;
+  
+  profileP.appendChild( link );
+  card.appendChild( avatarImg );
+  card.appendChild( cardInfo );
+
+  cardInfo.appendChild( nameH3 );
+  cardInfo.appendChild( userName );
+  cardInfo.appendChild( locationP );
+  cardInfo.appendChild( profileP );
+  cardInfo.appendChild( followersP );
+  cardInfo.appendChild( followingP );
+  cardInfo.appendChild( bioP );
+
+  return card;
+}
+
+/*
+const card = cardMaker({
+  avatar_url: "https://avatars3.githubusercontent.com/u/61103349?v=4",
+  html_url: "https://github.com/BeardedWrench",
+  name: "Terry Brown",
+  login: "BeardedWrench",
+  location: "Columbus, Ohio",
+  followers: 22,
+  following: 50,
+  bio: "I\'m Time Lord Terry",
+})
+*/
+
+
+
+
 
 /*
   List of LS Instructors Github username's:
@@ -58,3 +149,5 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+
